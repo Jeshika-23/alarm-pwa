@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alarm Clock</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #4CAF50;
+      --secondary-color: #2196F3;
+      --background-color: #f7f7f7;
+      --text-color: #333;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: var(--text-color);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+
+    }
+
+    .container {
+      max-width: 600px;
+      width: 100%;
+      padding: 20px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      margin: 20px auto;
+      transition: transform 0.3s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
+    }
+
+    h1 {
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      color: var(--text-color);
+      margin-bottom: 20px;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .time-display {
+      font-size: clamp(2.5rem, 8vw, 4.5rem);
+      font-weight: bold;
+      color: var(--secondary-color);
+      text-align: center;
+      margin: 20px 0;
+      font-family: 'Courier New', monospace;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      background: linear-gradient(45deg, #2196F3, #4CAF50);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      padding: 20px;
+      border-radius: 10px;
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      margin: 20px 0;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 10px;
+    }
+
+    input, select {
+      font-size: 1rem;
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: 2px solid #ddd;
+      outline: none;
+      transition: all 0.3s ease;
+      background: white;
+      min-width: 200px;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 15px rgba(33, 150, 243, 0.2);
+    }
+
+    button {
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      min-width: 150px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .alarm-list {
+      margin-top: 20px;
+    }
+
+    .alarm-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background: linear-gradient(45deg, #f8f9fa, #ffffff);
+      border-radius: 8px;
+      margin: 10px 0;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      animation: slideIn 0.3s ease;
+    }
+
+    .alarm-item:hover {
+      transform: translateX(5px);
+    }
+
+    .alarm-item button.delete {
+      background: linear-gradient(45deg, #ff4b4b, #ff6b6b);
+      padding: 8px 15px;
+      min-width: auto;
+    }
+
+    .math-prompt {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      animation: fadeIn 0.3s ease;
+      max-width: 90%;
+      width: 400px;
+    }
+
+    .quote {
+      font-style: italic;
+      color: #666;
+      text-align: center;
+      margin-top: 20px;
+      padding: 15px;
+      border-left: 4px solid var(--secondary-color);
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(-20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .ringing {
+      animation: shake 0.5s infinite;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px) rotate(-1deg); }
+      75% { transform: translateX(5px) rotate(1deg); }
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    @media (max-width: 480px) {
+      .controls {
+        flex-direction: column;
+      }
+      
+      input, select, button {
+        width: 100%;
+      }
+      
+      .alarm-item {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="animate__animated animate__fadeIn"> Alarm Clock</h1>
+    <div class="time-display animate__animated animate__fadeIn" id="current-time">00:00:00</div>
+    
+    <div class="controls animate__animated animate__fadeIn">
+      <input type="time" id="alarm-time" aria-label="Set alarm time">
+      <select id="tone-selector" aria-label="Select alarm tone">
+        <option value="beep">Simple Beep</option>
+        <option value="bell">Digital Bell</option>
+        <option value="melody">Melody</option>
+      </select>
+      <button onclick="setAlarm()">Set Alarm</button>
+    </div>
+    <link rel="manifest" href="manifest.json">
+
+    <div class="alarm-list" id="alarm-list"></div>
+    <div class="quote" id="quote"></div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+  <div class="math-prompt" id="math-prompt">
+    <h2>Solve to Stop Alarm</h2>
+    <p id="math-question"></p>
+    <input type="number" id="math-answer" placeholder="Enter your answer">
+    <button onclick="checkAnswer()">Submit</button>
+  </div>
+
+  <script>
+    let audioContext;
+    let oscillator;
+    let gainNode;
+    const alarms = [];
+    let currentMathAnswer = null;
+    document.addEventListener('click', () => {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    });
+
+    function createTone(type) {
+      if (!audioContext) return;
+      
+      oscillator = audioContext.createOscillator();
+      gainNode = audioContext.createGain();
+      
+      switch(type) {
+        case 'beep':
+          oscillator.type = 'sine';
+          oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+          break;
+        case 'bell':
+          oscillator.type = 'triangle';
+          oscillator.frequency.setValueAtTime(554.37, audioContext.currentTime);
+          break;
+        case 'melody':
+          oscillator.type = 'square';
+          oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+          setTimeout(() => {
+            oscillator.frequency.setValueAtTime(587.33, audioContext.currentTime + 0.2);
+          }, 200);
+          setTimeout(() => {
+            oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.4);
+          }, 400);
+          break;
+      }
+
+      gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      oscillator.start();
+    }
+
+    function stopTone() {
+      if (oscillator) {
+        oscillator.stop();
+        oscillator.disconnect();
+      }
+      if (gainNode) {
+        gainNode.disconnect();
+      }
+    }
+
+    function updateTime() {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString('en-US', { hour12: false });
+      document.getElementById('current-time').textContent = timeString;
+
+    
+      alarms.forEach((alarm, index) => {
+        if (alarm.time === timeString) {
+          ringAlarm(index);
+        }
+      });
+    }
+
+    setInterval(updateTime, 1000);
+
+    function setAlarm() {
+      const timeInput = document.getElementById('alarm-time');
+      const toneSelect = document.getElementById('tone-selector');
+      
+      if (!timeInput.value) {
+        alert('Please select a time for the alarm');
+        return;
+      }
+
+      const alarmTime = timeInput.value + ':00';
+      const tone = toneSelect.value;
+
+      alarms.push({ time: alarmTime, tone: tone });
+      updateAlarmList();
+
+    
+      const status = document.createElement('div');
+      status.textContent = `Alarm set for ${timeInput.value}`;
+      status.className = 'animate__animated animate__fadeIn quote';
+      setTimeout(() => status.remove(), 3000);
+      document.querySelector('.controls').appendChild(status);
+    }
+
+    function updateAlarmList() {
+      const list = document.getElementById('alarm-list');
+      list.innerHTML = '';
+      
+      alarms.forEach((alarm, index) => {
+        const item = document.createElement('div');
+        item.className = 'alarm-item animate__animated animate__fadeIn';
+        item.innerHTML = `
+          <span>Alarm ${index + 1}: ${alarm.time} - ${alarm.tone}</span>
+          <button class="delete" onclick="deleteAlarm(${index})">Delete</button>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function deleteAlarm(index) {
+      alarms.splice(index, 1);
+      updateAlarmList();
+    }
+
+    function ringAlarm(index) {
+      const alarm = alarms[index];
+      document.querySelector('.container').classList.add('ringing');
+      createTone(alarm.tone);
+      showMathProblem();
+      showMotivationalQuote();
+      document.getElementById('overlay').style.display = 'block';
+      deleteAlarm(index);
+    }
+
+    function showMathProblem() {
+      const num1 = Math.floor(Math.random() * 10) + 1;
+      const num2 = Math.floor(Math.random() * 10) + 1;
+      currentMathAnswer = num1 + num2;
+      document.getElementById('math-question').textContent = `What is ${num1} + ${num2}?`;
+      document.getElementById('math-prompt').style.display = 'block';
+    }
+
+    function checkAnswer() {
+      const userAnswer = parseInt(document.getElementById('math-answer').value);
+      if (userAnswer === currentMathAnswer) {
+        stopTone();
+        document.getElementById('math-prompt').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+        document.querySelector('.container').classList.remove('ringing');
+        document.getElementById('math-answer').value = '';
+      } else {
+      
+        const mathPrompt = document.getElementById('math-prompt');
+        mathPrompt.classList.add('animate__animated', 'animate__shakeX');
+        setTimeout(() => mathPrompt.classList.remove('animate__animated', 'animate__shakeX'), 500);
+      }
+    }
+
+    const quotes = [
+      "Rise and shine! Today is full of possibilities.",
+      "Every morning is a fresh start.",
+      "Make today amazing!",
+      "Your future is created by what you do today.",
+      "Today's goals are tomorrow's achievements."
+    ];
+
+    function showMotivationalQuote() {
+      const quote = quotes[Math.floor(Math.random() * quotes.length)];
+      document.getElementById('quote').textContent = quote;
+    }
+
+  
+    document.getElementById('math-answer').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        checkAnswer();
+      }
+    });
+  </script>
+</body>
+</html>
