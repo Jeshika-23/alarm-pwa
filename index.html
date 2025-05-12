@@ -259,13 +259,20 @@
     let audioContext;
     let oscillator;
     let gainNode;
-    const alarms = [];
+    // Load alarms from localStorage or initialize as an empty array
+    let alarms = JSON.parse(localStorage.getItem('alarms')) || [];
     let currentMathAnswer = null;
+
     document.addEventListener('click', () => {
       if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
       }
     });
+
+    // Function to save alarms to localStorage
+    function saveAlarmsToLocalStorage() {
+      localStorage.setItem('alarms', JSON.stringify(alarms));
+    }
 
     function createTone(type) {
       if (!audioContext) return;
@@ -286,10 +293,10 @@
           oscillator.type = 'square';
           oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
           setTimeout(() => {
-            oscillator.frequency.setValueAtTime(587.33, audioContext.currentTime + 0.2);
+            if (oscillator && oscillator.frequency) oscillator.frequency.setValueAtTime(587.33, audioContext.currentTime + 0.2);
           }, 200);
           setTimeout(() => {
-            oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.4);
+            if (oscillator && oscillator.frequency) oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.4);
           }, 400);
           break;
       }
@@ -304,9 +311,11 @@
       if (oscillator) {
         oscillator.stop();
         oscillator.disconnect();
+        oscillator = null; // Clear reference
       }
       if (gainNode) {
         gainNode.disconnect();
+        gainNode = null; // Clear reference
       }
     }
 
@@ -315,12 +324,13 @@
       const timeString = now.toLocaleTimeString('en-US', { hour12: false });
       document.getElementById('current-time').textContent = timeString;
 
-    
-      alarms.forEach((alarm, index) => {
-        if (alarm.time === timeString) {
-          ringAlarm(index);
+      // Check for alarms to ring
+      // Iterate backwards to safely remove alarms if they ring
+      for (let i = alarms.length - 1; i >= 0; i--) {
+        if (alarms[i].time === timeString) {
+          ringAlarm(i); // Pass index to ringAlarm
         }
-      });
+      }
     }
 
     setInterval(updateTime, 1000);
@@ -334,29 +344,33 @@
         return;
       }
 
-      const alarmTime = timeInput.value + ':00';
+      const alarmTime = timeInput.value + ':00'; // Ensure seconds are included for matching
       const tone = toneSelect.value;
 
       alarms.push({ time: alarmTime, tone: tone });
+      saveAlarmsToLocalStorage(); // Save alarms to localStorage
       updateAlarmList();
 
-    
       const status = document.createElement('div');
       status.textContent = `Alarm set for ${timeInput.value}`;
-      status.className = 'animate__animated animate__fadeIn quote';
+      status.className = 'animate__animated animate__fadeIn quote'; // Re-use quote style for status
+      document.querySelector('.container').appendChild(status); // Append to container for better visibility
       setTimeout(() => status.remove(), 3000);
-      document.querySelector('.controls').appendChild(status);
+
+      timeInput.value = ''; // Clear the input field
     }
 
     function updateAlarmList() {
       const list = document.getElementById('alarm-list');
-      list.innerHTML = '';
+      list.innerHTML = ''; // Clear existing list
       
       alarms.forEach((alarm, index) => {
         const item = document.createElement('div');
         item.className = 'alarm-item animate__animated animate__fadeIn';
+        // Display time without seconds for better readability, but store with seconds
+        const displayTime = alarm.time.substring(0, 5);
         item.innerHTML = `
-          <span>Alarm ${index + 1}: ${alarm.time} - ${alarm.tone}</span>
+          <span>Alarm ${index + 1}: ${displayTime} - ${alarm.tone}</span>
           <button class="delete" onclick="deleteAlarm(${index})">Delete</button>
         `;
         list.appendChild(item);
@@ -365,17 +379,23 @@
 
     function deleteAlarm(index) {
       alarms.splice(index, 1);
+      saveAlarmsToLocalStorage(); // Save updated alarms to localStorage
       updateAlarmList();
     }
 
     function ringAlarm(index) {
-      const alarm = alarms[index];
+      const alarmToRing = alarms[index]; // Get the alarm details before deleting
+      if (!alarmToRing) return; // Should not happen if logic is correct
+
+      // Remove alarm from list before ringing to prevent re-triggering
+      // and to persist its removal immediately.
+      deleteAlarm(index); 
+      
       document.querySelector('.container').classList.add('ringing');
-      createTone(alarm.tone);
+      createTone(alarmToRing.tone);
       showMathProblem();
       showMotivationalQuote();
       document.getElementById('overlay').style.display = 'block';
-      deleteAlarm(index);
     }
 
     function showMathProblem() {
@@ -393,9 +413,9 @@
         document.getElementById('math-prompt').style.display = 'none';
         document.getElementById('overlay').style.display = 'none';
         document.querySelector('.container').classList.remove('ringing');
-        document.getElementById('math-answer').value = '';
+        document.getElementById('math-answer').value = ''; // Clear answer field
+        currentMathAnswer = null; // Reset math answer
       } else {
-      
         const mathPrompt = document.getElementById('math-prompt');
         mathPrompt.classList.add('animate__animated', 'animate__shakeX');
         setTimeout(() => mathPrompt.classList.remove('animate__animated', 'animate__shakeX'), 500);
@@ -415,12 +435,37 @@
       document.getElementById('quote').textContent = quote;
     }
 
+    // Initial calls on page load
+    updateTime(); // Call once to set initial time immediately
+    updateAlarmList(); // Display any alarms loaded from localStorage
+    showMotivationalQuote(); // Show an initial motivational quote
   
     document.getElementById('math-answer').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
         checkAnswer();
       }
     });
+
+    // Check if manifest link already exists to prevent duplication if this script were re-run
+    if (!document.querySelector('link[rel="manifest"]')) {
+        const manifestLink = document.createElement('link');
+        manifestLink.rel = 'manifest';
+        manifestLink.href = 'manifest.json';
+        document.head.appendChild(manifestLink);
+    }
+
+    // Register Service Worker for PWA capabilities
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(registration => {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          })
+          .catch(error => {
+            console.log('ServiceWorker registration failed: ', error);
+          });
+      });
+    }
   </script>
 </body>
 </html>
