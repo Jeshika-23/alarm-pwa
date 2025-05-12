@@ -4,466 +4,409 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Alarm Clock</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="manifest" href="manifest.json">
   <style>
-    :root {
-      --primary-color: #4CAF50;
-      --secondary-color: #2196F3;
-      --background-color: #f7f7f7;
-      --text-color: #333;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      color: var(--text-color);
-      line-height: 1.6;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-
-    }
-
-    .container {
-      max-width: 600px;
-      width: 100%;
-      padding: 20px;
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-      margin: 20px auto;
-      transition: transform 0.3s ease;
-    }
-
-    .container:hover {
-      transform: translateY(-5px);
-    }
-
-    h1 {
-      font-size: clamp(1.5rem, 4vw, 2.5rem);
-      color: var(--text-color);
-      margin-bottom: 20px;
-      text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-
-    .time-display {
-      font-size: clamp(2.5rem, 8vw, 4.5rem);
-      font-weight: bold;
-      color: var(--secondary-color);
-      text-align: center;
-      margin: 20px 0;
-      font-family: 'Courier New', monospace;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-      background: linear-gradient(45deg, #2196F3, #4CAF50);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      padding: 20px;
-      border-radius: 10px;
-      background-color: rgba(255, 255, 255, 0.9);
-    }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
-      margin: 20px 0;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.5);
-      border-radius: 10px;
-    }
-
-    input, select {
-      font-size: 1rem;
-      padding: 12px 20px;
-      border-radius: 8px;
-      border: 2px solid #ddd;
-      outline: none;
-      transition: all 0.3s ease;
-      background: white;
-      min-width: 200px;
-    }
-
-    input:focus, select:focus {
-      border-color: var(--secondary-color);
-      box-shadow: 0 0 15px rgba(33, 150, 243, 0.2);
-    }
-
-    button {
-      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-      color: white;
-      border: none;
-      padding: 12px 25px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      transition: all 0.3s ease;
-      min-width: 150px;
-    }
-
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .alarm-list {
-      margin-top: 20px;
-    }
-
-    .alarm-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px;
-      background: linear-gradient(45deg, #f8f9fa, #ffffff);
-      border-radius: 8px;
-      margin: 10px 0;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-      transition: all 0.3s ease;
-      animation: slideIn 0.3s ease;
-    }
-
-    .alarm-item:hover {
-      transform: translateX(5px);
-    }
-
-    .alarm-item button.delete {
-      background: linear-gradient(45deg, #ff4b4b, #ff6b6b);
-      padding: 8px 15px;
-      min-width: auto;
-    }
-
-    .math-prompt {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-      animation: fadeIn 0.3s ease;
-      max-width: 90%;
-      width: 400px;
-    }
-
-    .quote {
-      font-style: italic;
-      color: #666;
-      text-align: center;
-      margin-top: 20px;
-      padding: 15px;
-      border-left: 4px solid var(--secondary-color);
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    }
-
-    @keyframes slideIn {
-      from {
-        transform: translateX(-20px);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .ringing {
-      animation: shake 0.5s infinite;
-    }
-
+    /* Custom animation for shaking effect if needed, Tailwind's default might be sufficient */
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px) rotate(-1deg); }
-      75% { transform: translateX(5px) rotate(1deg); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+      20%, 40%, 60%, 80% { transform: translateX(3px); }
     }
-
-    .overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 999;
+    .animate-app-shake {
+      animation: shake 0.5s ease-in-out;
     }
-
-    @media (max-width: 480px) {
-      .controls {
-        flex-direction: column;
-      }
-      
-      input, select, button {
-        width: 100%;
-      }
-      
-      .alarm-item {
-        flex-direction: column;
-        gap: 10px;
-        text-align: center;
-      }
+    /* Custom scrollbar for a cleaner look (optional) */
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
     }
   </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4CAF50',
+            secondary: '#2196F3',
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body>
-  <div class="container">
-    <h1 class="animate__animated animate__fadeIn"> Alarm Clock</h1>
-    <div class="time-display animate__animated animate__fadeIn" id="current-time">00:00:00</div>
-    
-    <div class="controls animate__animated animate__fadeIn">
-      <input type="time" id="alarm-time" aria-label="Set alarm time">
-      <select id="tone-selector" aria-label="Select alarm tone">
-        <option value="beep">Simple Beep</option>
-        <option value="bell">Digital Bell</option>
-        <option value="melody">Melody</option>
-      </select>
-      <button onclick="setAlarm()">Set Alarm</button>
-    </div>
-    <link rel="manifest" href="manifest.json">
+<body class="bg-gray-100 text-gray-800 flex flex-col items-center justify-center min-h-screen p-4 antialiased">
 
-    <div class="alarm-list" id="alarm-list"></div>
-    <div class="quote" id="quote"></div>
+  <div id="app-container" class="bg-white shadow-xl rounded-lg w-full max-w-md p-6 space-y-6 transition-transform duration-500">
+    <header class="text-center">
+      <h1 class="text-3xl font-bold text-gray-700">Smart Alarm</h1>
+    </header>
+
+    <div id="current-time" class="text-6xl font-mono font-bold text-center text-secondary py-4 bg-gray-50 rounded-lg">
+      00:00:00
+    </div>
+
+    <div class="text-center">
+      <button onclick="openAddAlarmModal()" class="w-full sm:w-auto bg-primary hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-0.5 flex items-center justify-center mx-auto">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+        </svg>
+        Add New Alarm
+      </button>
+    </div>
+
+    <div id="alarm-list-container" class="space-y-3 max-h-60 overflow-y-auto pr-2">
+      <h2 class="text-xl font-semibold text-gray-600 mb-2 sticky top-0 bg-white py-1">Your Alarms</h2>
+      <div id="alarm-list" class="space-y-3">
+        <!-- Alarms will be injected here -->
+      </div>
+    </div>
+
+    <div id="quote-container" class="mt-6 pt-4 border-t border-gray-200">
+        <p id="quote" class="text-sm text-gray-600 italic text-center bg-yellow-50 p-3 rounded-md"></p>
+    </div>
+     <div id="status-container" class="mt-2">
+        <!-- Status messages will be injected here -->
+    </div>
+
   </div>
 
-  <div class="overlay" id="overlay"></div>
-  <div class="math-prompt" id="math-prompt">
-    <h2>Solve to Stop Alarm</h2>
-    <p id="math-question"></p>
-    <input type="number" id="math-answer" placeholder="Enter your answer">
-    <button onclick="checkAnswer()">Submit</button>
+  <!-- Add Alarm Modal -->
+  <div id="addAlarmModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm space-y-4 transform scale-95 opacity-0 transition-all duration-300">
+      <h2 class="text-xl font-semibold text-gray-700">Set New Alarm</h2>
+      <div>
+        <label for="alarm-time-modal" class="block text-sm font-medium text-gray-700">Time</label>
+        <input type="time" id="alarm-time-modal" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm">
+      </div>
+      <div>
+        <label for="tone-selector-modal" class="block text-sm font-medium text-gray-700">Alarm Tone</label>
+        <select id="tone-selector-modal" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm rounded-md">
+          <option value="beep">Simple Beep</option>
+          <option value="bell">Digital Bell</option>
+          <option value="melody">Melody</option>
+        </select>
+      </div>
+      <div class="flex justify-end space-x-3">
+        <button onclick="closeAddAlarmModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors">Cancel</button>
+        <button onclick="setAlarmFromModal()" class="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-green-600 rounded-md transition-colors">Set Alarm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Math Prompt Modal -->
+  <div id="mathPromptModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+    <div id="mathPromptBox" class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-xs space-y-4 text-center transform scale-95 opacity-0 transition-all duration-300">
+      <h2 class="text-2xl font-bold text-gray-800">Wake Up!</h2>
+      <p id="math-question" class="text-lg text-gray-700"></p>
+      <input type="number" id="math-answer" class="mt-1 block w-full px-3 py-2 text-center text-lg bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" placeholder="Your Answer">
+      <button onclick="checkAnswer()" class="w-full bg-secondary hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-0.5">Submit</button>
+    </div>
   </div>
 
   <script>
     let audioContext;
     let oscillator;
     let gainNode;
-    // Load alarms from localStorage or initialize as an empty array
     let alarms = JSON.parse(localStorage.getItem('alarms')) || [];
     let currentMathAnswer = null;
+    let ringTimeoutId = null;
 
-    document.addEventListener('click', () => {
+    const appContainer = document.getElementById('app-container');
+    const addAlarmModal = document.getElementById('addAlarmModal');
+    const addAlarmModalContent = addAlarmModal.querySelector('div');
+    const mathPromptModal = document.getElementById('mathPromptModal');
+    const mathPromptBox = document.getElementById('mathPromptBox');
+    const alarmTimeInputModal = document.getElementById('alarm-time-modal');
+    const toneSelectorModal = document.getElementById('tone-selector-modal');
+    const mathAnswerInput = document.getElementById('math-answer');
+    const quoteElement = document.getElementById('quote');
+    const alarmListElement = document.getElementById('alarm-list');
+    const currentTimeElement = document.getElementById('current-time');
+    const statusContainer = document.getElementById('status-container');
+
+
+    document.addEventListener('click', initAudioContext, { once: true });
+
+    function initAudioContext() {
       if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
       }
-    });
+    }
 
-    // Function to save alarms to localStorage
     function saveAlarmsToLocalStorage() {
       localStorage.setItem('alarms', JSON.stringify(alarms));
     }
 
+    function openAddAlarmModal() {
+      addAlarmModal.classList.remove('opacity-0', 'pointer-events-none');
+      addAlarmModal.classList.add('opacity-100');
+      addAlarmModalContent.classList.remove('scale-95', 'opacity-0');
+      addAlarmModalContent.classList.add('scale-100', 'opacity-100');
+      alarmTimeInputModal.value = ''; // Clear previous input
+    }
+
+    function closeAddAlarmModal() {
+      addAlarmModalContent.classList.remove('scale-100', 'opacity-100');
+      addAlarmModalContent.classList.add('scale-95', 'opacity-0');
+      addAlarmModal.classList.remove('opacity-100');
+      addAlarmModal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
     function createTone(type) {
-      if (!audioContext) return;
-      
+      if (!audioContext) {
+        initAudioContext();
+        if (!audioContext) return;
+      }
+      stopTone();
       oscillator = audioContext.createOscillator();
       gainNode = audioContext.createGain();
-      
+      const baseTime = audioContext.currentTime;
       switch(type) {
         case 'beep':
           oscillator.type = 'sine';
-          oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+          oscillator.frequency.setValueAtTime(880, baseTime); // Higher pitch beep
+          gainNode.gain.setValueAtTime(0.3, baseTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.0001, baseTime + 0.8);
           break;
         case 'bell':
           oscillator.type = 'triangle';
-          oscillator.frequency.setValueAtTime(554.37, audioContext.currentTime);
+          oscillator.frequency.setValueAtTime(554.37, baseTime);
+          gainNode.gain.setValueAtTime(0.4, baseTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.0001, baseTime + 1.2);
           break;
         case 'melody':
           oscillator.type = 'square';
-          oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
-          setTimeout(() => {
-            if (oscillator && oscillator.frequency) oscillator.frequency.setValueAtTime(587.33, audioContext.currentTime + 0.2);
-          }, 200);
-          setTimeout(() => {
-            if (oscillator && oscillator.frequency) oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.4);
-          }, 400);
+          // A simple arpeggio
+          oscillator.frequency.setValueAtTime(261.63, baseTime); // C4
+          oscillator.frequency.setValueAtTime(329.63, baseTime + 0.25); // E4
+          oscillator.frequency.setValueAtTime(392.00, baseTime + 0.5); // G4
+          oscillator.frequency.setValueAtTime(523.25, baseTime + 0.75); // C5
+          gainNode.gain.setValueAtTime(0.25, baseTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.0001, baseTime + 1.1);
           break;
       }
-
-      gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
-      oscillator.start();
+      oscillator.start(baseTime);
+      oscillator.stop(baseTime + 1.2); // Stop after 1.2s
     }
 
     function stopTone() {
+      if (ringTimeoutId) clearTimeout(ringTimeoutId);
       if (oscillator) {
-        oscillator.stop();
-        oscillator.disconnect();
-        oscillator = null; // Clear reference
+        try { oscillator.stop(); oscillator.disconnect(); } catch (e) {}
+        oscillator = null;
       }
       if (gainNode) {
-        gainNode.disconnect();
-        gainNode = null; // Clear reference
+        try { gainNode.disconnect(); } catch (e) {}
+        gainNode = null;
       }
     }
 
     function updateTime() {
       const now = new Date();
       const timeString = now.toLocaleTimeString('en-US', { hour12: false });
-      document.getElementById('current-time').textContent = timeString;
+      currentTimeElement.textContent = timeString;
 
-      // Check for alarms to ring
-      // Iterate backwards to safely remove alarms if they ring
       for (let i = alarms.length - 1; i >= 0; i--) {
+        if (alarms[i].isRinging) continue;
         if (alarms[i].time === timeString) {
-          ringAlarm(i); // Pass index to ringAlarm
+          ringAlarm(i);
         }
       }
     }
 
     setInterval(updateTime, 1000);
 
-    function setAlarm() {
-      const timeInput = document.getElementById('alarm-time');
-      const toneSelect = document.getElementById('tone-selector');
-      
-      if (!timeInput.value) {
-        alert('Please select a time for the alarm');
+    function setAlarmFromModal() {
+      if (!alarmTimeInputModal.value) {
+        alert('Please select a time for the alarm.');
+        return;
+      }
+      const alarmTime = alarmTimeInputModal.value + ':00';
+      const tone = toneSelectorModal.value;
+
+      if (alarms.some(alarm => alarm.time === alarmTime)) {
+        displayStatusMessage(`An alarm for ${alarmTimeInputModal.value} already exists.`, 'warning');
         return;
       }
 
-      const alarmTime = timeInput.value + ':00'; // Ensure seconds are included for matching
-      const tone = toneSelect.value;
-
-      alarms.push({ time: alarmTime, tone: tone });
-      saveAlarmsToLocalStorage(); // Save alarms to localStorage
+      alarms.push({ time: alarmTime, tone: tone, isRinging: false });
+      alarms.sort((a, b) => a.time.localeCompare(b.time));
+      saveAlarmsToLocalStorage();
       updateAlarmList();
+      displayStatusMessage(`Alarm set for ${alarmTimeInputModal.value}`, 'success');
+      closeAddAlarmModal();
+    }
 
-      const status = document.createElement('div');
-      status.textContent = `Alarm set for ${timeInput.value}`;
-      status.className = 'animate__animated animate__fadeIn quote'; // Re-use quote style for status
-      document.querySelector('.container').appendChild(status); // Append to container for better visibility
-      setTimeout(() => status.remove(), 3000);
+    function displayStatusMessage(message, type = 'info') {
+        const statusDiv = document.createElement('div');
+        statusDiv.textContent = message;
+        let bgColor, textColor, borderColor;
 
-      timeInput.value = ''; // Clear the input field
+        switch (type) {
+            case 'success':
+                bgColor = 'bg-green-100'; textColor = 'text-green-700'; borderColor = 'border-green-400';
+                break;
+            case 'warning':
+                bgColor = 'bg-yellow-100'; textColor = 'text-yellow-700'; borderColor = 'border-yellow-400';
+                break;
+            default: // info
+                bgColor = 'bg-blue-100'; textColor = 'text-blue-700'; borderColor = 'border-blue-400';
+        }
+        
+        statusDiv.className = `${bgColor} ${textColor} p-3 rounded-md border-l-4 ${borderColor} text-sm shadow`;
+        
+        statusContainer.innerHTML = ''; 
+        statusContainer.appendChild(statusDiv);
+
+        setTimeout(() => {
+            statusDiv.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+            statusDiv.addEventListener('transitionend', () => statusDiv.remove());
+        }, 3000);
     }
 
     function updateAlarmList() {
-      const list = document.getElementById('alarm-list');
-      list.innerHTML = ''; // Clear existing list
-      
+      alarmListElement.innerHTML = '';
+      if (alarms.length === 0) {
+        alarmListElement.innerHTML = '<p class="text-center text-gray-500 text-sm py-4">No alarms set. Time for a nap?</p>';
+        return;
+      }
       alarms.forEach((alarm, index) => {
-        const item = document.createElement('div');
-        item.className = 'alarm-item animate__animated animate__fadeIn';
-        // Display time without seconds for better readability, but store with seconds
         const displayTime = alarm.time.substring(0, 5);
+        const item = document.createElement('div');
+        item.className = 'bg-gray-50 p-3 rounded-lg shadow flex justify-between items-center hover:bg-gray-100 transition-colors';
         item.innerHTML = `
-          <span>Alarm ${index + 1}: ${displayTime} - ${alarm.tone}</span>
-          <button class="delete" onclick="deleteAlarm(${index})">Delete</button>
+          <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-secondary mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <span class="font-semibold text-gray-700 text-lg">${displayTime}</span>
+              <span class="block text-xs text-gray-500">${alarm.tone.charAt(0).toUpperCase() + alarm.tone.slice(1)}</span>
+            </div>
+          </div>
+          <button onclick="deleteAlarm(${index})" class="p-2 text-red-500 hover:text-red-700 hover:bg-red-100 rounded-full transition-colors" aria-label="Delete alarm for ${displayTime}">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+          </button>
         `;
-        list.appendChild(item);
+        alarmListElement.appendChild(item);
       });
     }
 
     function deleteAlarm(index) {
       alarms.splice(index, 1);
-      saveAlarmsToLocalStorage(); // Save updated alarms to localStorage
+      saveAlarmsToLocalStorage();
       updateAlarmList();
+      displayStatusMessage('Alarm deleted.', 'info');
     }
 
     function ringAlarm(index) {
-      const alarmToRing = alarms[index]; // Get the alarm details before deleting
-      if (!alarmToRing) return; // Should not happen if logic is correct
-
-      // Remove alarm from list before ringing to prevent re-triggering
-      // and to persist its removal immediately.
-      deleteAlarm(index); 
+      if (alarms[index].isRinging) return;
+      alarms[index].isRinging = true;
+      const alarmToRing = alarms[index];
       
-      document.querySelector('.container').classList.add('ringing');
-      createTone(alarmToRing.tone);
-      showMathProblem();
+      appContainer.classList.add('animate-app-shake'); // Custom shake for main container
+      setTimeout(() => appContainer.classList.remove('animate-app-shake'), 1000);
+
       showMotivationalQuote();
-      document.getElementById('overlay').style.display = 'block';
+      
+      mathPromptModal.classList.remove('opacity-0', 'pointer-events-none');
+      mathPromptModal.classList.add('opacity-100');
+      mathPromptBox.classList.remove('scale-95', 'opacity-0');
+      mathPromptBox.classList.add('scale-100', 'opacity-100');
+
+      function playRepeatedTone() {
+        createTone(alarmToRing.tone);
+        ringTimeoutId = setTimeout(playRepeatedTone, 1500); // Tone repeat interval
+      }
+      playRepeatedTone();
+      showMathProblem(index);
     }
 
-    function showMathProblem() {
-      const num1 = Math.floor(Math.random() * 10) + 1;
-      const num2 = Math.floor(Math.random() * 10) + 1;
+    function showMathProblem(alarmIndex) {
+      const num1 = Math.floor(Math.random() * 12) + 1; // Slightly harder
+      const num2 = Math.floor(Math.random() * 12) + 1;
       currentMathAnswer = num1 + num2;
-      document.getElementById('math-question').textContent = `What is ${num1} + ${num2}?`;
-      document.getElementById('math-prompt').style.display = 'block';
+      document.getElementById('math-question').textContent = `${num1} + ${num2} = ?`;
+      mathPromptModal.dataset.alarmIndex = alarmIndex;
+      mathAnswerInput.value = '';
+      mathAnswerInput.focus();
     }
 
     function checkAnswer() {
-      const userAnswer = parseInt(document.getElementById('math-answer').value);
+      const alarmIndex = parseInt(mathPromptModal.dataset.alarmIndex);
+      const userAnswer = parseInt(mathAnswerInput.value);
+
       if (userAnswer === currentMathAnswer) {
-        stopTone();
-        document.getElementById('math-prompt').style.display = 'none';
-        document.getElementById('overlay').style.display = 'none';
-        document.querySelector('.container').classList.remove('ringing');
-        document.getElementById('math-answer').value = ''; // Clear answer field
-        currentMathAnswer = null; // Reset math answer
+        stopTone(); // Clears ringTimeoutId as well
+        if (alarms[alarmIndex]) {
+          alarms[alarmIndex].isRinging = false;
+        }
+        
+        mathPromptBox.classList.remove('scale-100', 'opacity-100');
+        mathPromptBox.classList.add('scale-95', 'opacity-0');
+        mathPromptModal.classList.remove('opacity-100');
+        mathPromptModal.classList.add('opacity-0', 'pointer-events-none');
+        
+        mathAnswerInput.value = '';
+        currentMathAnswer = null;
+        mathPromptModal.removeAttribute('data-alarm-index');
+
+        deleteAlarm(alarmIndex); // Alarm is handled and deleted
+        updateAlarmList();
       } else {
-        const mathPrompt = document.getElementById('math-prompt');
-        mathPrompt.classList.add('animate__animated', 'animate__shakeX');
-        setTimeout(() => mathPrompt.classList.remove('animate__animated', 'animate__shakeX'), 500);
+        mathPromptBox.classList.add('animate-app-shake');
+        setTimeout(() => mathPromptBox.classList.remove('animate-app-shake'), 500);
+        mathAnswerInput.value = '';
+        mathAnswerInput.focus();
+         displayStatusMessage('Incorrect answer. Try again!', 'warning'); // Provide feedback in the main UI if modal closes
       }
     }
 
     const quotes = [
-      "Rise and shine! Today is full of possibilities.",
-      "Every morning is a fresh start.",
-      "Make today amazing!",
-      "Your future is created by what you do today.",
-      "Today's goals are tomorrow's achievements."
+      "Rise and shine! Today is full of possibilities.", "Every morning is a fresh start, make it count.",
+      "Make today amazing!", "Your future is created by what you do today, not tomorrow.",
+      "Today's goals are tomorrow's achievements.", "The secret of getting ahead is getting started.",
+      "Don't watch the clock; do what it does. Keep going.", "The best way to predict the future is to create it."
     ];
 
     function showMotivationalQuote() {
-      const quote = quotes[Math.floor(Math.random() * quotes.length)];
-      document.getElementById('quote').textContent = quote;
+      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+      quoteElement.textContent = randomQuote;
+      quoteElement.classList.remove('opacity-0'); // For re-triggering fade-in if desired
+      void quoteElement.offsetWidth; // Trigger reflow
+      quoteElement.classList.add('opacity-100', 'transition-opacity', 'duration-500');
     }
-
-    // Initial calls on page load
-    updateTime(); // Call once to set initial time immediately
-    updateAlarmList(); // Display any alarms loaded from localStorage
-    showMotivationalQuote(); // Show an initial motivational quote
-  
-    document.getElementById('math-answer').addEventListener('keypress', function(e) {
+    
+    mathAnswerInput.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
         checkAnswer();
       }
     });
 
-    // Check if manifest link already exists to prevent duplication if this script were re-run
-    if (!document.querySelector('link[rel="manifest"]')) {
-        const manifestLink = document.createElement('link');
-        manifestLink.rel = 'manifest';
-        manifestLink.href = 'manifest.json';
-        document.head.appendChild(manifestLink);
-    }
+    // Initial calls
+    updateTime();
+    updateAlarmList();
+    showMotivationalQuote();
 
-    // Register Service Worker for PWA capabilities
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/service-worker.js')
-          .then(registration => {
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-          })
-          .catch(error => {
-            console.log('ServiceWorker registration failed: ', error);
-          });
+          .then(reg => console.log('ServiceWorker registered.', reg))
+          .catch(err => console.log('ServiceWorker registration failed:', err));
       });
     }
   </script>
